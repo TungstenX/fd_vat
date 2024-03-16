@@ -18,18 +18,18 @@ public class Entry implements Comparable<Entry> {
 
     @Override
     public String toString() {
-        NumberFormat formatter = new DecimalFormat("R #0.00");
+        NumberFormat formatter = new DecimalFormat("\u00A4 #0.00");
         return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + ","
                 + description + ","
-                + formatter.format(amount) + ","
+                + "\"" + formatter.format(amount) + "\","
                 + account;
     }
 
     public String toStringSummed() {
-        NumberFormat formatter = new DecimalFormat("R #0.00");
+        NumberFormat formatter = new DecimalFormat("\u00A4 #0.00");
         return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + ","
                 + description + ","
-                + formatter.format(amount);
+                + "\"" + formatter.format(amount) + "\"";
     }
 
     @Override

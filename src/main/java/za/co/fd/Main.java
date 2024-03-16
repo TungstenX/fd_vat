@@ -17,24 +17,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    final static Pattern PATTERN = Pattern.compile("([0-9]+|\\*)(\\|)([0-9a-zA-Z ]+)(\\|)?([<|>]{1}[-0-9]+)?(\\|)?([0-9a-zA-Z ]+)?");
 
     public static void main(String[] args) {
-
         String fileNameRules;
         String fileNameIn;
         String fileNameOut;
         int startMonth;
         int endMonth;
 
-
         if (args.length < 5) {
             final String[] questions = {
-                    "Rules (path/to/rules/file): ",
-                    "Input file (path/to/input/file): ",
+                    "Rules (path/to/rules/file):        ",
+                    "Input file (path/to/input/file):   ",
                     "Output file (path/to/output/file): ",
-                    "Start month (1-12): ",
-                    "End month (path/to/rules/file): ",
+                    "Start month (1-12):                ",
+                    "End month (1-12):                  ",
             };
             final String[] answers = new String[questions.length];
             for (int i = 0; i < questions.length; i++) {
@@ -59,8 +56,6 @@ public class Main {
         final List<String> list = readInFileIn(fileNameIn);
         final List<Entry> entries = new LinkedList<>();
         final Map<String, String> rules = readInRules(fileNameRules);
-
-        showInputRules();
 
         int rulesSize = rules.size();
 
@@ -104,19 +99,19 @@ public class Main {
         String currentAccount = "";
         double total = 0.0;
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(file))) {
-            bf.write("DATE,DESCRIPTION,AMOUNT");
-            bf.newLine();
             Collections.sort(entries);
             for (Entry entry : entries) {
                 if (!currentAccount.equals(entry.getAccount())) {
+                    writeOutTotal(total, bf);
+                    bf.newLine();
+
                     bf.write(",ACCOUNT: ");
                     bf.write(entry.getAccount());
                     bf.write(",");
                     bf.newLine();
                     bf.write("DATE,DESCRIPTION,AMOUNT");
                     bf.newLine();
-
-                    writeOutTotal(total, bf);
+                    total = 0.0;
 
                     currentAccount = entry.getAccount();
                 }
@@ -132,7 +127,7 @@ public class Main {
     }
 
     private static void writeOutTotal(double total, BufferedWriter bf) throws IOException {
-        if (total > 0.0) {
+        if (Math.abs(total) > 0.0) {
             bf.write(",TOTAL,");
             NumberFormat formatter = new DecimalFormat("R #0.00");
             bf.write(formatter.format(total));
@@ -140,21 +135,10 @@ public class Main {
         }
     }
 
-    private static void showInputRules() {
-        System.out.println("Rule format: \"([0-9]+|\\\\*)(\\\\|)([0-9a-zA-Z ]+)(\\\\|)?([<|>]{1}[-0-9]+)?(\\\\|)?([0-9a-zA-Z ]+)?\"");
-        System.out.println("\tE.g:\n\t\t25|Bank charges\n\t\t*|Petrol Car|<600|Petrol Generator");
-        System.out.println("\tFields:");
-        System.out.println("\t\t0. Substring length of description to use as key for rule or \"*\" to use the full length of the description [Mandatory]");
-        System.out.println("\t\t1. The account name that this rule will apply [Mandatory]");
-        System.out.println("\t\t2. Amount condition. Either < or > followed by amount no decimals (Optional)");
-        System.out.println("\t\t3. Alternative account name if condition is true (Optional)");
-    }
-
     private static Map<String, String> readInRules(String fileNameRules) {
         Map<String, String> rules = new HashMap<>();
         try (Stream<String> stream = Files.lines(Paths.get(fileNameRules))) {
             rules = stream
-                    .map(String::toUpperCase)
                     .map(s -> s.split(","))
                     .collect(Collectors.groupingBy(a -> a[0],
                             Collectors.mapping(a -> a[1],
@@ -163,6 +147,11 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //quick test
+        rules.keySet().forEach(key -> {
+                    System.out.println("Checking key: " + key);
+                    Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
+                });
         return rules;
     }
 
@@ -193,84 +182,47 @@ public class Main {
             return;
         }
         String key = getKeyFrom(rules, entry.getDescription());
-        if (key == null) {
-            String input;
-            Matcher matcher;
-            boolean correct;
+        boolean loop = key == null;
+        while (loop) {
+            String inputRegex;
+            String inputAction;
+            System.out.println("No rule for \"" + entry.getDescription() + "\" R " + entry.getAmount());
             do {
-                System.out.print("            " + numberOfChars(entry.getDescription()) + "\n");
-                System.out.print("No rule for " + entry.getDescription() + " R " + entry.getAmount() + ", Name of new rule: ");
+                System.out.println("Regex of new rule: ");
+                System.out.println("\tFor amount before description: [.\\d,]+\\s*");
+                System.out.println("\tEscape * with \\*");
                 Scanner s = new Scanner(System.in);
-                input = s.nextLine().trim();
-                matcher = PATTERN.matcher(input);
-                correct = matcher.matches();
-                if (!correct) {
-                    System.out.println("ERROR: Wrong input");
-                }
-            } while (!correct);
+                inputRegex = s.nextLine().trim();
+            } while (inputRegex.length() == 0);
+            do {
+                System.out.println("Category of new rule: ");
+                Scanner s = new Scanner(System.in);
+                inputAction = s.nextLine().trim();
+            } while (inputAction.length() == 0);
 
-            String[] a = input.split("\\|");
-            int endPos;
-            String action = a[1];
-            if ("*".equals(a[0])) {
-                endPos = entry.getDescription().length();
+            //Test regex
+            Pattern pattern = Pattern.compile(inputRegex, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(entry.getDescription());
+            loop = !matcher.find();
+            if (!loop) {
+                rules.put(inputRegex, inputAction.toUpperCase(Locale.ENGLISH));
             } else {
-                endPos = Integer.parseInt(a[0]) + 1;
-            }
-            if (a.length > 2) {
-                action += "," + a[2] + "," + a[3];
-            } else {
-                action += ",,";
-            }
-
-            key = entry.getDescription().substring(0, endPos);
-            rules.put(key, action.toUpperCase(Locale.ENGLISH));
-        }
-        String[] actions = rules.get(key).split(",");
-        String account;
-        if (actions.length == 1) {
-            account = actions[0];
-        } else {
-            char operator = actions[1].charAt(0);
-            if (operator == '<') {
-                if (entry.getAmount() < Double.parseDouble(actions[1].substring(1))) {
-                    account = actions[2];
-                } else {
-                    account = actions[0];
-                }
-            } else {
-                if (entry.getAmount() > Double.parseDouble(actions[1].substring(1))) {
-                    account = actions[2];
-                } else {
-                    account = actions[0];
-                }
+                System.err.println("Regex of new rule doesn't work, please try again");
             }
         }
-        entry.setAccount(account);
+        entry.setAccount(rules.get(key));
         System.out.println("Processing: " + entry);
         entries.add(entry);
     }
 
     protected static String getKeyFrom(final Map<String, String> rules, final String desc) {
-        for (int i = 1; i < desc.length() + 1; i++) {
-            String s = desc.substring(0, i);
-            if (rules.containsKey(s)) {
-                return desc.substring(0, i);
-            }
-        }
-        return null;
-    }
-
-    private static String numberOfChars(final String str) {
-        int i = 0;
-        StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < str.length(); j++) {
-            sb.append(i);
-            i++;
-            if (i == 10) {
-                i = 0;
-            }
-        }
-        return sb.toString();
+        return rules.keySet().stream()
+                .filter(key -> {
+                    Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = pattern.matcher(desc);
+                    return matcher.find();
+                })
+                .findFirst()
+                .orElse(null);
     }
 }
