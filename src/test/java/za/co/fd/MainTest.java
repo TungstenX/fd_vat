@@ -1,6 +1,7 @@
 package za.co.fd;
 
 import org.junit.jupiter.api.Test;
+import za.co.fd.data.Entry;
 
 import static org.junit.jupiter.api.Assertions.*;
 

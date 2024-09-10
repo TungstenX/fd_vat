@@ -1,5 +1,6 @@
-package za.co.fd;
+package za.co.fd.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class Entry implements Comparable<Entry> {
     private LocalDate date;
     private Double amount;
@@ -18,18 +20,18 @@ public class Entry implements Comparable<Entry> {
 
     @Override
     public String toString() {
-        NumberFormat formatter = new DecimalFormat("\u00A4 #0.00");
-        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + ","
-                + description + ","
-                + "\"" + formatter.format(amount) + "\","
-                + account;
+        NumberFormat formatter = new DecimalFormat("#0.00"); // ¤
+        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + "|"
+                + description + "|"
+                + formatter.format(amount) + "|"
+                + account + "|";
     }
 
     public String toStringSummed() {
-        NumberFormat formatter = new DecimalFormat("\u00A4 #0.00");
-        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + ","
-                + description + ","
-                + "\"" + formatter.format(amount) + "\"";
+        NumberFormat formatter = new DecimalFormat("#0.00"); // ¤
+        return date.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + "|"
+                + description + "|"
+                + formatter.format(amount) + "|";
     }
 
     @Override
