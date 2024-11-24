@@ -40,6 +40,9 @@ build/
 ### Data files
 *.csv
 0*/
+1*/
+2*/
 *.jar
 *.xls
 *.xlsx
+*.properties
