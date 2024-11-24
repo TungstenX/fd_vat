@@ -12,9 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import za.co.fd.Constants;
+import za.co.fd.gi.UitsetGGI;
 
 public class PDFInputReader {
-    public static List<String> readInPDFFileIn(String fileNameIn) {
+    public static List<String> readInPDFFileIn(String fileNameIn, UitsetGGI uitsetGGI) {
         List<String> list = new ArrayList<>();
         try{
             PdfReader reader = new PdfReader(new FileInputStream(fileNameIn));
@@ -43,24 +44,22 @@ public class PDFInputReader {
                     LocalDate dateTime = LocalDate.parse(dateInString, Constants.DATE_TIME_FORMATTER_PDF);
                     StringBuilder sb = new StringBuilder(dateTime.format(Constants.DATE_TIME_FORMATTER_CSV));
                     sb.append(", ");
-                    preProcessPDFLine(sb, m.group(3));
-                    System.out.println("*/*/*" + sb);
+                    preProcessPDFLine(sb, m.group(3), uitsetGGI);
+                    uitsetGGI.voegByUitsetBoks(sb.toString());
                     list.add(sb.toString());
                 }
             }
-            //System.out.println(text);
         } catch (IOException e) {
-            System.err.println(e);
+            uitsetGGI.voegByUitsetBoks("[ᚢᛁᛚᛚᚨ] Lees van pdf lêer: " + e.getMessage());
         }
         return list;
     }
 
-    private static void preProcessPDFLine(StringBuilder sb, String group3) {
+    private static void preProcessPDFLine(StringBuilder sb, String group3, UitsetGGI uitsetGGI) {
         String regex = "((\\s?\\d{1,3}(,\\d{3})*(\\.\\d+)(Cr)?){1,3})$";
         Pattern endsThreeAmount = Pattern.compile(regex);
         Matcher m3 = endsThreeAmount.matcher(group3);
         if(m3.find()) {
-            //System.out.println("\t3 Amounts: " + m3.group(0));
             String description = group3.replace(m3.group(0), "");
             if ("".equals(description)) {
                 description = "UNKNOWN";
@@ -80,7 +79,7 @@ public class PDFInputReader {
                 sb.append(Constants.DECIMAL_FORMAT.format(result)).append(", ").append(Constants.DECIMAL_FORMAT.format(result)).append(", ").append(description.toUpperCase());
             }
         } else {
-            System.out.println("\tNo amount for " + group3);
+            uitsetGGI.voegByUitsetBoks("[ᚢᛁᛚᛚᚨ] Geen bedrag vir: " + group3);
         }
     }
 }

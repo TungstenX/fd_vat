@@ -16,12 +16,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.28</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- iText -->
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -59,6 +53,26 @@
             <artifactId>fastexcel</artifactId>
             <version>0.18.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.googlecode.lanterna/lanterna -->
+        <dependency>
+            <groupId>com.googlecode.lanterna</groupId>
+            <artifactId>lanterna</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.36</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.17.0</version>
+        </dependency>
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -84,7 +98,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>finalName</finalName>
+                            <finalName>FD_Vat</finalName>
                             <archive>
                                 <manifest>
                                     <mainClass>

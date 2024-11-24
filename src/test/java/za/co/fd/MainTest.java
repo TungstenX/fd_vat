@@ -10,8 +10,9 @@ import java.util.*;
 class MainTest {
     @Test
     void getKeyFrom() {
+        Main main = new Main();
         Map<String, String> rules = Map.ofEntries(Map.entry("STEPHNIE SARS", "PAYROLL,,"));
-        String str = Main.getKeyFrom(rules, "STEPHNIE SARS");
+        String str = main.getKeyFrom(rules, "STEPHNIE SARS");
         assertNotNull(str);
     }
 
