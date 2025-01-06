@@ -46,3 +46,4 @@ build/
 *.xls
 *.xlsx
 *.properties
+config.properties

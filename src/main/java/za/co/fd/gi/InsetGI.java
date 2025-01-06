@@ -15,6 +15,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.crypto.io.SignerOutputStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -241,10 +242,11 @@ public class InsetGI implements WindowListener, UitsetGGI {
 //                System.out.println(selectedOutput);
 //                System.out.println(monthStart);
 //                System.out.println(monthEnd);
-                if(checkLoadingValues()) {
+                String terug = checkLoadingValues();
+                if(terug == null) {
                     window.close();
                 } else {
-                   MessageDialog.showMessageDialog(gui, "Fout", "Een of meer velde is of leeg of verkeerd", MessageDialogButton.OK);
+                   MessageDialog.showMessageDialog(gui, "Fout", "Een of meer velde is of leeg of verkeerd. " + terug, MessageDialogButton.OK);
                 }
             }
         });
@@ -255,19 +257,40 @@ public class InsetGI implements WindowListener, UitsetGGI {
 
     }
 
-    private boolean checkLoadingValues() {
-        boolean startEnabled = StringUtils.isNotBlank(this.gekoseReëls) && gekoseReëls.endsWith(".csv") && new File(gekoseReëls).exists() && !(new File(gekoseReëls).isDirectory()) &&
-                StringUtils.isNotBlank(this.gekoseUitset) && gekoseUitset.endsWith(".xls") && new File(gekoseUitset).exists() && !(new File(gekoseUitset).isDirectory());
-
+    private String checkLoadingValues() {
+        if (StringUtils.isBlank(this.gekoseReëls)) {
+            return "Gekose reëls lêer naam is nie gestel nie";
+        } else if (!gekoseReëls.endsWith(".csv")) {
+            return "Gekose reëls lêer moet 'n .csv lêer wees";
+        } else if (new File(gekoseReëls).isDirectory()) {
+            return "Gekose reëls lêer mag nie 'n directory wees nie";
+        } else if (StringUtils.isBlank(this.gekoseUitset)) {
+            return "Gekose uitset lêer naam is nie gestel nie";
+        } else if (!gekoseUitset.endsWith(".xls")) {
+            return "Gekose uitset lêer moet 'n .xls lêer wees";
+        } else if (new File(gekoseUitset).isDirectory()) {
+            return "Gekose uitset lêer mag nie 'n directory wees nie";
+        }
+        boolean gevind = false;
         for(String input: gekoseBankstate.split("\n")) {
-            startEnabled &= StringUtils.isNotBlank(input) && input.endsWith(".pdf") && new File(input).exists() && !(new File(input).isDirectory());
-            if(!startEnabled) {
-                break;
+            System.out.println("Bankstaat: " + input);
+            if (StringUtils.isBlank(input)) {
+                return "Gekose bankstaat lêer naam is nie gestel nie";
+            } else if (!input.endsWith(".pdf")) {
+                return "Gekose bankstaat lêer moet 'n .pdf lêer wees [" + input + "]";
+            } else if (!new File(input).exists()) {
+                return "Gekose bankstaat lêer moet bestaan [" + input + "]";
+            } else if (new File(input).isDirectory()) {
+                return "Gekose bankstaat lêer mag nie 'n directory wees nie [" + input + "]";
             }
+            gevind = true;
         }
 
-        startEnabled &= maandBegin > 0 && maandEindig > 0 && maandBegin < maandEindig;
-        return startEnabled;
+        if (gevind) {
+            return null;
+        } else {
+            return "Geen bankstaat lêers is gekies nie";
+        }
     }
 
     public String[] maakNuweReëlDlg(final String description, final Map<String, String> rules) {

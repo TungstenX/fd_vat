@@ -162,14 +162,14 @@ public class Main {
 
     public void runProcess() {
         insetGI.setGekoseReëls(configManager.get("laaste.reëls", "/home/andre/Projects/Java/FD_Vat/"));
-        insetGI.setGekoseBankstate(configManager.get("laaste.bankstate", "/home/andre/Projects/Java/FD_Vat/"));
+        insetGI.setGekoseBankstate(configManager.get("laaste.bankstate", "/home/andre/Projects/Java/FD_Vat/").replace("#", "\n"));
         insetGI.setGekoseUitset(configManager.get("laaste.uitset", "/home/andre/Projects/Java/FD_Vat/"));
         insetGI.setMaandBegin(Integer.parseInt(configManager.get("laaste.maand.begin", "1")));
         insetGI.setMaandEindig(Integer.parseInt(configManager.get("laaste.maand.eindig", "2")));
         insetGI.wysLaaiDlg();
 
         configManager.set("laaste.reëls", insetGI.getGekoseReëls());
-        configManager.set("laaste.bankstate", insetGI.getGekoseBankstate());
+        configManager.set("laaste.bankstate", insetGI.getGekoseBankstate().replace("\n", "#"));
         configManager.set("laaste.uitset", insetGI.getGekoseUitset());
         configManager.set("laaste.maand.begin", Integer.toString(insetGI.getMaandBegin()));
         configManager.set("laaste.maand.eindig", Integer.toString(insetGI.getMaandEindig()));
