@@ -1,13 +1,23 @@
 package za.co.fd.gi;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
-import com.googlecode.lanterna.gui2.dialogs.*;
-import org.apache.commons.collections4.list.TreeList;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.LocalizedString;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.Panels;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.dialogs.ListSelectDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
-import java.util.*;
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -85,7 +95,7 @@ class ReëlDlg extends DialogWindow {
         contentPane.addComponent(new Button("...", new Runnable() {
             @Override
             public void run() {
-                String gekose = ListSelectDialog.showDialog(getTextGUI(), "Kies 'n rekening",null, new TerminalSize(40, 10),  rekeninge.toArray(String[]::new));
+                String gekose = ListSelectDialog.showDialog(getTextGUI(), "Kies 'n rekening", null, new TerminalSize(40, 10), rekeninge.toArray(String[]::new));
                 account.setText(gekose);
             }
         }));

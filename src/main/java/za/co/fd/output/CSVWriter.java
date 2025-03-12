@@ -13,8 +13,10 @@ import java.util.List;
 
 public class CSVWriter {
     public static void outputFile(final List<Entry> entries, final String fileLocation) {
+        outputFile(entries, new File (fileLocation));
+    }
+    public static void outputFile(final List<Entry> entries, final File file) {
         //Output output file
-        File file = new File(fileLocation);
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(file))) {
             bf.write("DATE|DESCRIPTION|AMOUNT|FOR ACCOUNT|");
             bf.newLine();
@@ -29,7 +31,11 @@ public class CSVWriter {
     }
 
     public static void outputSummedFile(final List<Entry> entries, final String fileNameOut) {
+        outputSummedFile(entries, new File(fileNameOut));
+    }
+    public static void outputSummedFile(final List<Entry> entries, final File fileOut) {
         //Output summed up
+        String fileNameOut = fileOut.getAbsolutePath();
         final String fileNameOutSummed = fileNameOut.replace(".csv", "_summed.csv");
         File file = new File(fileNameOutSummed);
         String currentAccount = "";

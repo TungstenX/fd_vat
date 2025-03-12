@@ -3,7 +3,20 @@ package za.co.fd.gi;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.ActionListBox;
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.DefaultWindowManager;
+import com.googlecode.lanterna.gui2.EmptySpace;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.FileDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
@@ -15,18 +28,20 @@ import com.googlecode.lanterna.terminal.Terminal;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.crypto.io.SignerOutputStream;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 @Getter
 @Setter
-public class InsetGI implements WindowListener, UitsetGGI {
+public class InsetGI implements WindowListener, UitsetGI {
     private String gekoseReëls = "/home/andre/Projects/Java/FD_Vat/";
     private String gekoseBankstate = "/home/andre/Projects/Java/FD_Vat/";
     private String gekoseUitset = "/home/andre/Projects/Java/FD_Vat/";
@@ -228,7 +243,7 @@ public class InsetGI implements WindowListener, UitsetGGI {
         window.setComponent(paneel);
         // Create gui and start gui
         MultiWindowTextGUI gui = new MultiWindowTextGUI(skerm, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
-        Button beginKnoppie= new Button("Begin", new Runnable() {
+        Button beginKnoppie = new Button("Begin", new Runnable() {
             @Override
             public void run() {
                 gekoseReëls = reëls.getText();
@@ -243,10 +258,10 @@ public class InsetGI implements WindowListener, UitsetGGI {
 //                System.out.println(monthStart);
 //                System.out.println(monthEnd);
                 String terug = checkLoadingValues();
-                if(terug == null) {
+                if (terug == null) {
                     window.close();
                 } else {
-                   MessageDialog.showMessageDialog(gui, "Fout", "Een of meer velde is of leeg of verkeerd. " + terug, MessageDialogButton.OK);
+                    MessageDialog.showMessageDialog(gui, "Fout", "Een of meer velde is of leeg of verkeerd. " + terug, MessageDialogButton.OK);
                 }
             }
         });
@@ -272,7 +287,7 @@ public class InsetGI implements WindowListener, UitsetGGI {
             return "Gekose uitset lêer mag nie 'n directory wees nie";
         }
         boolean gevind = false;
-        for(String input: gekoseBankstate.split("\n")) {
+        for (String input : gekoseBankstate.split("\n")) {
             System.out.println("Bankstaat: " + input);
             if (StringUtils.isBlank(input)) {
                 return "Gekose bankstaat lêer naam is nie gestel nie";

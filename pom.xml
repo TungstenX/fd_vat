@@ -73,6 +73,15 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.17.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.uiDesigner/ui-designer -->
+        <dependency>
+            <groupId>com.jetbrains.intellij.uiDesigner</groupId>
+            <artifactId>ui-designer</artifactId>
+            <version>243.25659.59</version>
+        </dependency>
+
+
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

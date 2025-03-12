@@ -1,19 +1,31 @@
 package za.co.fd;
 
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import za.co.fd.config.ConfigManager;
 import za.co.fd.data.Entry;
+import za.co.fd.gi.InsetCGI;
 import za.co.fd.gi.InsetGI;
+import za.co.fd.gi.Raam;
 import za.co.fd.input.CSVInputReader;
 import za.co.fd.input.PDFInputReader;
 import za.co.fd.output.CSVWriter;
 import za.co.fd.output.ExcelWriter;
 
-import java.io.*;
+import javax.swing.SwingUtilities;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -21,19 +33,42 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
+    @Getter
     private final ConfigManager configManager = new ConfigManager();
     private final InsetGI insetGI = new InsetGI();
 
+
     public Main() {
         configManager.loadConfig();
-        insetGI.begin();
+        //insetGI.begin();
     }
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.runProcess();
+
+        //main.runProcess();
+        //main.runProcess2();
+        SwingUtilities.invokeLater(() -> {
+            Raam raam1 = new Raam(main.getConfigManager());
+            raam1.setVisible(true);
+
+            /*raam1.setSaveButtonListener(new SaveButtonListener() {
+                @Override
+                public void onSaveClicked(Book book) {
+                    System.out.println("Entered Book Details:");
+                    System.out.println("Book Title: " + book.getName());
+                    System.out.println("Author: " + book.getAuthor().getName());
+                    System.out.println("Genre: " + book.getGenre());
+                    System.out.println("Is Unavailable: " + book.isTaken());
+                }
+            });*/
+        });
 
     }
+
+//    public void runProcess2() {
+//        raam.wysRaam();
+//    }
 
     public void processLine(final Map<String, String> rules, final List<Entry> entries, int startMonth, int endMonth, final String line) {
         final String[] parts = line.split(",");
@@ -159,6 +194,7 @@ public class Main {
         processOutputFile(startMonth, endMonth, entries, fileNameOut);
         processOutputSummedFile(entries, fileNameOut);
     }*/
+
 
     public void runProcess() {
         insetGI.setGekoseReëls(configManager.get("laaste.reëls", "/home/andre/Projects/Java/FD_Vat/"));

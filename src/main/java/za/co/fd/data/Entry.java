@@ -36,6 +36,6 @@ public class Entry implements Comparable<Entry> {
 
     @Override
     public int compareTo(Entry o) {
-        return account.compareTo(o.account) == 0? date.compareTo(o.date) :  account.compareTo(o.account);
+        return account.compareTo(o.account) == 0 ? date.compareTo(o.date) : account.compareTo(o.account);
     }
 }

@@ -1,9 +1,18 @@
 package za.co.fd.output;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import za.co.fd.data.Entry;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Comparator;
@@ -11,8 +20,11 @@ import java.util.List;
 
 public class ExcelWriter {
     public static void outputFile(final int startMonth, final int endMonth, final List<Entry> entries, final String fileLocation) {
+        outputFile(startMonth, endMonth, entries, new File(fileLocation));
+    }
+    public static void outputFile(final int startMonth, final int endMonth, final List<Entry> entries, final File fileLocation) {
         entries.sort(Comparator.comparing(Entry::getDate));
-        try(Workbook workbook = new XSSFWorkbook()) {
+        try (Workbook workbook = new XSSFWorkbook()) {
 
             Sheet sheet = workbook.createSheet(String.format("%d-%d", startMonth, endMonth));
             sheet.setColumnWidth(0, 2000);
@@ -58,7 +70,6 @@ public class ExcelWriter {
             headerCell.setCellStyle(headerStyle);
 
 
-
             int rowIndex = 1;
             for (Entry entry : entries) {
                 Row row = sheet.createRow(rowIndex);
@@ -88,6 +99,10 @@ public class ExcelWriter {
     }
 
     public static void outputSummedFile(final List<Entry> entries, final String fileNameOut) {
+        outputSummedFile(entries, new File(fileNameOut));
+    }
+
+    public static void outputSummedFile(final List<Entry> entries, final File fileNameOut) {
 
     }
 }

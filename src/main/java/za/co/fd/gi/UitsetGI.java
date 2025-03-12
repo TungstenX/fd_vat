@@ -1,5 +1,5 @@
 package za.co.fd.gi;
 
-public interface UitsetGGI {
+public interface UitsetGI {
     void voegByUitsetBoks(final String uitsetLyn);
 }
