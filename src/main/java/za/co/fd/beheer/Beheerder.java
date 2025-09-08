@@ -65,7 +65,7 @@ public class Beheerder extends Thread {
             try (BufferedWriter bf = new BufferedWriter(new FileWriter(reëlsLêer))) {
                 for (Map.Entry<String, String> entry :
                         reëls.entrySet()) {
-                    bf.write(entry.getKey() + ","
+                    bf.write(entry.getKey().replace(",","~") + ","
                             + entry.getValue());
                     bf.newLine();
                 }
@@ -143,9 +143,15 @@ public class Beheerder extends Thread {
     protected String getKeyFrom(final Map<String, String> rules, final String desc) {
         return rules.keySet().stream()
                 .filter(key -> {
-                    Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = pattern.matcher(desc);
-                    return matcher.find();
+                    try {
+                        Pattern pattern = Pattern.compile(key.replace("~", ","), Pattern.CASE_INSENSITIVE);
+                        Matcher matcher = pattern.matcher(desc);
+                        return matcher.find();
+                    } catch (PatternSyntaxException e){
+                        String value = rules.getOrDefault(key, "NOT FOUND");
+                        System.out.println("Error: key: " + key + " value: " + value + " Error: " + e.getMessage());
+                        throw new RuntimeException(e.getDescription());
+                    }
                 })
                 .findFirst()
                 .orElse(null);

@@ -80,7 +80,12 @@
             <artifactId>ui-designer</artifactId>
             <version>243.25659.59</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.uiDesigner/ui-designer -->
+<!--        <dependency>-->
+<!--            <groupId>com.jetbrains.intellij.uiDesigner</groupId>-->
+<!--            <artifactId>ui-designer</artifactId>-->
+<!--            <version>252.25557.131</version>-->
+<!--        </dependency>-->
 
         <!-- Testing -->
         <dependency>
